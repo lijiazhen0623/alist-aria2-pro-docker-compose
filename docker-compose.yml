@@ -10,8 +10,8 @@ services:
     environment:
       - PUID=0 # Find your own user PUID and group PGID. https://docs.linuxserver.io/general/understanding-puid-and-pgid
       - PGID=0 # When using volumes (-v flags) permissions issues can arise between the host OS and the container, we avoid this issue by allowing you to specify the user PUID and group PGID.
-      - Qbittorrent_ADDRESS=qbittorrentee
-      - Qbittorrent_PORT=8181
+      - Qbittorrent_ADDRESS=qbittorrent
+      - Qbittorrent_PORT=8080
     volumes:
       - ${PWD}/alist:/opt/alist/data
     ports:
@@ -30,7 +30,7 @@ services:
       - UMASK_SET=022
       - RPC_SECRET=REPLACE_WITH_YOUR_OWN_ARIA2_RPC_SECRET # Please set your own RPC secret.
       - RPC_PORT=6800
-      - LISTEN_PORT=6888
+      - LISTEN_PORT=6999
       - DISK_CACHE=64M
       - IPV6_MODE=false
       - UPDATE_TRACKERS=true
@@ -42,8 +42,8 @@ services:
       - ${PWD}/aria2/data:/opt/alist/data # Aria2 Data folder
     ports:
       - "6800:6800"
-      - "6888:6888"
-      - "6888:6888/udp"
+      - "6999:6999"
+      - "6999:6999/udp"
     restart: unless-stopped
     logging:
       driver: json-file
@@ -71,21 +71,22 @@ services:
 
   # https://hub.docker.com/r/superng6/qbittorrentee
   qbittorrent:
-    image: superng6/qbittorrentee:latest
-    container_name: qbittorrentee
+    image: linuxserver/qbittorrent:5.0.3
+    container_name: qbittorrent
     environment:
       - PUID=0
       - PGID=0
       - TZ=Asia/Shanghai
-      - WEBUIPORT=8181
+      - WEBUIPORT=8080
+      - TORRENTING_PORT=8848
     volumes:
       - ${PWD}/qbittorrent/config:/config       # config
       - ${PWD}/qbittorrent/downloads:/downloads # Downloads
       - ${PWD}/qbittorrent/data:/opt/alist/data # Data
     ports:
-      - 8181:8181
-      - 6881:6881
-      - 6881:6881/udp
+      - 8080:8080
+      - 8848:8848
+      - 8848:8848/udp
     restart: unless-stopped
     networks:
       - alistbridge
